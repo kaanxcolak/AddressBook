@@ -56,7 +56,7 @@ namespace AddressBookDL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CityTable",
+                name: "Cities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -68,7 +68,7 @@ namespace AddressBookDL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CityTable", x => x.Id);
+                    table.PrimaryKey("PK_Cities", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -178,7 +178,7 @@ namespace AddressBookDL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DistrictTable",
+                name: "Districts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -190,17 +190,17 @@ namespace AddressBookDL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DistrictTable", x => x.Id);
+                    table.PrimaryKey("PK_Districts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DistrictTable_CityTable_CityId",
+                        name: "FK_Districts_Cities_CityId",
                         column: x => x.CityId,
-                        principalTable: "CityTable",
+                        principalTable: "Cities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "NeighbourhoodTable",
+                name: "Neighbourhoods",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -213,17 +213,17 @@ namespace AddressBookDL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NeighbourhoodTable", x => x.Id);
+                    table.PrimaryKey("PK_Neighbourhoods", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_NeighbourhoodTable_DistrictTable_DistrictId",
+                        name: "FK_Neighbourhoods_Districts_DistrictId",
                         column: x => x.DistrictId,
-                        principalTable: "DistrictTable",
+                        principalTable: "Districts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserAddressTable",
+                name: "UserAddresses",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -238,17 +238,17 @@ namespace AddressBookDL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserAddressTable", x => x.Id);
+                    table.PrimaryKey("PK_UserAddresses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserAddressTable_AspNetUsers_UserId",
+                        name: "FK_UserAddresses_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserAddressTable_NeighbourhoodTable_NeighbourhoodId",
+                        name: "FK_UserAddresses_Neighbourhoods_NeighbourhoodId",
                         column: x => x.NeighbourhoodId,
-                        principalTable: "NeighbourhoodTable",
+                        principalTable: "Neighbourhoods",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -293,23 +293,23 @@ namespace AddressBookDL.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DistrictTable_CityId",
-                table: "DistrictTable",
+                name: "IX_Districts_CityId",
+                table: "Districts",
                 column: "CityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NeighbourhoodTable_DistrictId",
-                table: "NeighbourhoodTable",
+                name: "IX_Neighbourhoods_DistrictId",
+                table: "Neighbourhoods",
                 column: "DistrictId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAddressTable_NeighbourhoodId",
-                table: "UserAddressTable",
+                name: "IX_UserAddresses_NeighbourhoodId",
+                table: "UserAddresses",
                 column: "NeighbourhoodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAddressTable_UserId",
-                table: "UserAddressTable",
+                name: "IX_UserAddresses_UserId",
+                table: "UserAddresses",
                 column: "UserId");
         }
 
@@ -332,7 +332,7 @@ namespace AddressBookDL.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "UserAddressTable");
+                name: "UserAddresses");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -341,13 +341,13 @@ namespace AddressBookDL.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "NeighbourhoodTable");
+                name: "Neighbourhoods");
 
             migrationBuilder.DropTable(
-                name: "DistrictTable");
+                name: "Districts");
 
             migrationBuilder.DropTable(
-                name: "CityTable");
+                name: "Cities");
         }
     }
 }

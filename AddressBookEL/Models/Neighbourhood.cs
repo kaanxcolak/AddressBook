@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace AddressBookEL.Models
 {
+    [Table("Neighbourhoods")]
     public class Neighbourhood:BaseNumeric
     {
         //Eğer bu tablonun PK'sı string olsaydı BaseNumericten kalıtım alamazdı! Böyle bir senaryoda

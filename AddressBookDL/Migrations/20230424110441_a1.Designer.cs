@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AddressBookDL.Migrations
 {
     [DbContext(typeof(MyContext))]
-    [Migration("20230424105219_a1")]
+    [Migration("20230424110441_a1")]
     partial class a1
     {
         /// <inheritdoc />
@@ -167,7 +167,7 @@ namespace AddressBookDL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CityTable");
+                    b.ToTable("Cities");
                 });
 
             modelBuilder.Entity("AddressBookEL.Models.District", b =>
@@ -198,7 +198,7 @@ namespace AddressBookDL.Migrations
 
                     b.HasIndex("CityId");
 
-                    b.ToTable("DistrictTable");
+                    b.ToTable("Districts");
                 });
 
             modelBuilder.Entity("AddressBookEL.Models.Neighbourhood", b =>
@@ -234,7 +234,7 @@ namespace AddressBookDL.Migrations
 
                     b.HasIndex("DistrictId");
 
-                    b.ToTable("NeighbourhoodTable");
+                    b.ToTable("Neighbourhoods");
                 });
 
             modelBuilder.Entity("AddressBookEL.Models.UserAddress", b =>
@@ -279,7 +279,7 @@ namespace AddressBookDL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserAddressTable");
+                    b.ToTable("UserAddresses");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
