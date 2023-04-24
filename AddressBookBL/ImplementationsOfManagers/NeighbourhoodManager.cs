@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace AddressBookBL.ImplementationsOfManagers
 {
-    public class DistrictManager : Manager<DistrictVM, District, int>
+    public class NeighbourhoodManager : Manager<NeighbourhoodVM, Neighbourhood, int>
     {
 
-        public DistrictManager(IDistrictRepo repo, IMapper mapper)
-            : base(repo, mapper, "City")
+        public NeighbourhoodManager(INeighbourhoodRepo repo, IMapper mapper)
+            : base(repo, mapper, "District")
         {
 
         }

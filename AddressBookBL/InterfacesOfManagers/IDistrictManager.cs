@@ -9,6 +9,5 @@ namespace AddressBookBL.InterfacesOfManagers
 {
     public interface IDistrictManager : IManager<DistrictVM, int>
     {
-
     }
 }

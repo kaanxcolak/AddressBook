@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AddressBookBL.InterfacesOfManagers
 {
-    public interface IUserAddressManager : IManager<UserAddressVM, int>
+    public interface INeighbourhoodManager : IManager<NeighbourhoodVM, int>
     {
     }
 }
