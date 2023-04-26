@@ -1,5 +1,6 @@
 ﻿using AddressBookEL.IdentityModels;
 using AddressBookPL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -124,26 +125,38 @@ namespace AddressBookPL.Controllers
                     
                     return View(model);
                 }
-                //user'ı buldu
-                var logininresult = _signInManager.PasswordSignInAsync(user, model.Password, true).Result;
+                //user'ı bulduk
 
-                //sen hatalı mısın?
-                //Eğer başarısız  giriş yaparsa başarısız olduğunun sayısını kaydediyoruz!
-                user.AccessFailedCount++;
-                //eğer başarısızlık 2 olduysa kilitlenecek
-                if (user.AccessFailedCount == 2)
+                var signinResult = _signInManager.PasswordSignInAsync(user, model.Password, true,true).Result;
+                if (signinResult.Succeeded)
                 {
-                    user.LockoutEnd = DateTime.Now.AddMinutes(2);
-                    ModelState.AddModelError("", $"Hatalı giriş sayısı 2 olmuştur! xxx kadar sonra tekrar deneyiniz!");
+                    //yönlendirme yapılacak
+                    if (_userManager.IsInRoleAsync(user,"Customer").Result)
+                    {
+                        TempData["LoggedInUsername"] = user.UserName;
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else if (_userManager.IsInRoleAsync(user, "Admin").Result)
+                    {
+                        return RedirectToAction("Dashboard", "Admin", new { area=""}); //areayı unutma
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+
+                    }
                 }
-                var updateResult = _userManager.UpdateAsync(user).Result;
-                if (user.AccessFailedCount == 2)
+                else if(signinResult.IsLockedOut)
                 {
-                    var d = user.LockoutEnd;
+                    ModelState.AddModelError("","2 defa yanlış işlem yaptığınız için " + $"{user.LockoutEnd.Value.ToString("HH:mm:ss")} den sonra giriş yapabilirsiniz!");
+                        return View(model);
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Giriş başarısızdır!");
                     return View(model);
-                    
                 }
-                return View(model);
                 
             }
 
@@ -152,6 +165,14 @@ namespace AddressBookPL.Controllers
                 ModelState.AddModelError("", "Beklenmedik bir hata oluştu!");   //"","" deki ilk çift tırnak herhangi bir yerde genel gelen mesaj için. Gerekirse key veririz oraya
                 return View(model);
             }
+        }
+
+        [Authorize]
+        public IActionResult Logout()
+        {
+            _signInManager.SignOutAsync();
+            TempData["LoggedInUsername"] = null;
+            return RedirectToAction("Login", "Account");
         }
     }
 }

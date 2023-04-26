@@ -1,4 +1,9 @@
-﻿using AddressBookPL.Models;
+﻿using AddressBookBL.EmailSenderBusiness;
+using AddressBookBL.InterfacesOfManagers;
+using AddressBookDL.InterfacesOfRepo;
+using AddressBookEL.IdentityModels;
+using AddressBookPL.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,27 +11,18 @@ namespace AddressBookPL.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        private readonly ICityManager _cityManager;
+        private readonly IDistrictManager _districtManager;
+        private readonly INeighbourhoodManager _neighbourhoodManager;
+        private readonly IUserAddressManager _userAddressManager;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<AppRole> _roleManager;
+        private readonly IEmailSender _emailManager;
 
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }

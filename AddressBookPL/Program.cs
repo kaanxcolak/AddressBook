@@ -12,6 +12,14 @@ builder.Services.AddDbContext<MyContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Local"));
 });
+
+var lockoutOptions = new LockoutOptions()
+{
+    AllowedForNewUsers = true,
+    DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1),
+    MaxFailedAccessAttempts = 2
+};
+
 //identity ayarları
 builder.Services.AddIdentity<AppUser,AppRole>(options =>
 {
@@ -23,6 +31,7 @@ builder.Services.AddIdentity<AppUser,AppRole>(options =>
     options.Password.RequireDigit = false;  
     options.User.RequireUniqueEmail = true;
     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz-_0123456789";
+    options.Lockout = lockoutOptions;
 
 
 }).AddDefaultTokenProviders().AddEntityFrameworkStores<MyContext>();
