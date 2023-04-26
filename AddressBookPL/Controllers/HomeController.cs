@@ -2,7 +2,9 @@
 using AddressBookBL.InterfacesOfManagers;
 using AddressBookDL.InterfacesOfRepo;
 using AddressBookEL.IdentityModels;
+using AddressBookEL.ViewModels;
 using AddressBookPL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -19,9 +21,39 @@ namespace AddressBookPL.Controllers
         private readonly RoleManager<AppRole> _roleManager;
         private readonly IEmailSender _emailManager;
 
+        public HomeController(ICityManager cityManager, IDistrictManager districtManager, INeighbourhoodManager neighbourhoodManager, IUserAddressManager userAddressManager, UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, IEmailSender emailManager)
+        {
+            _cityManager = cityManager;
+            _districtManager = districtManager;
+            _neighbourhoodManager = neighbourhoodManager;
+            _userAddressManager = userAddressManager;
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _emailManager = emailManager;
+        }
+
         public IActionResult Index()
         {
             return View();
+        }
+
+        [HttpGet]
+        //identity' yi kullandığımız için Authorize içine role eklenebilir
+        [Authorize(Roles ="Customer,Guest")]  //AddAddress kısmına Customer ve Guest erişsin sadece dedik 
+        public IActionResult AddAddress()
+        {
+            try
+            {
+                ViewBag.Cities = _cityManager.GetAll(x=> !x.IsRemoved).Data;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Cities = new List<CityVM>();
+                return View();
+                
+            }
+        
         }
 
     }
