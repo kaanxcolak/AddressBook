@@ -10,7 +10,7 @@ namespace AddressBookPL.DefaultData
             try
             {
                 //admin // customer // misafir vb...
-                string[] roles = new string[] { "admin", "customer", "guest" };
+                string[] roles = new string[] { "Admin", "Customer", "Guest" };
 
                 //rolleri tek tek dönüp sisteme olup olmadığına bakacağız. Yoksa ekleyeceğiz.
                 foreach (var item in roles)
@@ -21,7 +21,7 @@ namespace AddressBookPL.DefaultData
                         //rolden yokmuş ekleyelim
                         AppRole role = new AppRole()
                         {
-                            Name = $"{DateTime.Now} {item}"
+                            Name =item
                         };
                         var result = roleManager.CreateAsync(role).Result;
                     }
