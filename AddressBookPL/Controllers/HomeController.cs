@@ -45,7 +45,13 @@ namespace AddressBookPL.Controllers
             try
             {
                 ViewBag.Cities = _cityManager.GetAll(x=> !x.IsRemoved).Data;
-                return View();
+                var user = _userManager.FindByNameAsync(HttpContext.User.Identity?.Name).Result;
+                UserAddressVM model = new()
+                {
+                    UserId = user.Id
+                };
+
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -54,6 +60,72 @@ namespace AddressBookPL.Controllers
                 
             }
         
+        }
+
+        [HttpGet]
+        public JsonResult GetCityDistricts(int id)
+        {
+            try
+            {
+                var data = _districtManager.GetAll(x => x.CityId == id && !x.IsRemoved).Data;
+                if (data ==null)
+                {
+                    return Json(new { issuccess = false, message = "İlçeler bulunamadı!" });
+                }
+                return Json(new { issuccess = true, message = "İlçeler geldi",data });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { issuccess = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetDistrictsNeigh(int id)
+        {
+            try
+            {
+                var data = _neighbourhoodManager.GetAll(x => x.DistrictId == id && !x.IsRemoved).Data;
+                if (data == null)
+                {
+                    return Json(new { issuccess = false, message = "Mahalleler bulunamadı!" });
+                }
+                return Json(new { issuccess = true, message = "Mahalleler geldi", data });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { issuccess = false, message = ex.Message });
+            }
+
+
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Customer")]
+        public JsonResult SaveAddress([FromBody]UserAddressVM model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return Json(new { issuccess = false, msg = "Verileri eksiksiz girdiğinize emin olun!" });
+                }
+                model.CreatedDate = DateTime.Now;
+                var result = _userAddressManager.Add(model);
+                if (result.IsSuccess)
+                {
+                    return Json(new { issuccess = true, msg = "Yeni adres eklendi!!!" });
+
+                }
+                return Json(new { issuccess = false, msg = "Ekleme BAŞARISIZ!" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { issuccess = false, msg = ex.Message });
+            }
         }
 
     }
