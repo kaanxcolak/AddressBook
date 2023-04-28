@@ -213,6 +213,7 @@
                 $("#addresstitle").val('');
                 $("#addressdetail").val('');
                 $("#cityselect").val(0).trigger('change'); // trigger ile change eventı tetiklendi
+                $("#checkbox1").attr('checked', false);
 
             }); // btnClear bitti
 
@@ -232,6 +233,10 @@
                     };
                     //IsDefaultAddress
 
+                    if ($('#checkbox1').is(':checked')) {
+                        address.IsDefaultAddress = true;
+                    }
+
 
                     $.ajax({
                         contentType: "application/json charset=utf-8;",
@@ -249,6 +254,7 @@
                                 $("#addresstitle").val('');
                                 $("#addressdetail").val('');
                                 $("#cityselect").val(0).trigger('change'); // trigger ile change eventı tetiklendi
+                                $("#checkbox1").attr('checked', false);
 
                             } else {
                                 alert(res.msg);

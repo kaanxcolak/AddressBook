@@ -7,6 +7,7 @@ using AddressBookPL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.IIS;
 using System.Diagnostics;
 
 namespace AddressBookPL.Controllers
@@ -38,13 +39,14 @@ namespace AddressBookPL.Controllers
         }
 
         [HttpGet]
-        //identity' yi kullandığımız için Authorize içine role eklenebilir
-        [Authorize(Roles ="Customer,Guest")]  //AddAddress kısmına Customer ve Guest erişsin sadece dedik 
+        // identity'yi kullandığımız için Authorize içine role eklenebilir
+        [Authorize(Roles = "Customer,Guest")]
         public IActionResult AddAddress()
         {
             try
             {
-                ViewBag.Cities = _cityManager.GetAll(x=> !x.IsRemoved).Data;
+                ViewBag.Cities = _cityManager.GetAll(x => !x.IsRemoved).Data;
+
                 var user = _userManager.FindByNameAsync(HttpContext.User.Identity?.Name).Result;
                 UserAddressVM model = new()
                 {
@@ -57,10 +59,9 @@ namespace AddressBookPL.Controllers
             {
                 ViewBag.Cities = new List<CityVM>();
                 return View();
-                
             }
-        
         }
+
 
         [HttpGet]
         public JsonResult GetCityDistricts(int id)
@@ -68,11 +69,13 @@ namespace AddressBookPL.Controllers
             try
             {
                 var data = _districtManager.GetAll(x => x.CityId == id && !x.IsRemoved).Data;
-                if (data ==null)
+
+                if (data == null)
                 {
-                    return Json(new { issuccess = false, message = "İlçeler bulunamadı!" });
+                    return Json(new { issuccess = false, message = "ilçeler bulunamadı!" });
                 }
-                return Json(new { issuccess = true, message = "İlçeler geldi",data });
+
+                return Json(new { issuccess = true, message = "ilçeler geldi", data });
 
             }
             catch (Exception ex)
@@ -80,6 +83,7 @@ namespace AddressBookPL.Controllers
                 return Json(new { issuccess = false, message = ex.Message });
             }
         }
+
 
         [HttpGet]
         public JsonResult GetDistrictsNeigh(int id)
@@ -87,11 +91,13 @@ namespace AddressBookPL.Controllers
             try
             {
                 var data = _neighbourhoodManager.GetAll(x => x.DistrictId == id && !x.IsRemoved).Data;
+
                 if (data == null)
                 {
-                    return Json(new { issuccess = false, message = "Mahalleler bulunamadı!" });
+                    return Json(new { issuccess = false, message = "mahalleler bulunamadı!" });
                 }
-                return Json(new { issuccess = true, message = "Mahalleler geldi", data });
+
+                return Json(new { issuccess = true, message = "mahalleler geldi", data });
 
             }
             catch (Exception ex)
@@ -99,12 +105,14 @@ namespace AddressBookPL.Controllers
                 return Json(new { issuccess = false, message = ex.Message });
             }
 
-
         }
+
+
+
 
         [HttpPost]
         [Authorize(Roles = "Customer")]
-        public JsonResult SaveAddress([FromBody]UserAddressVM model)
+        public JsonResult SaveAddress([FromBody] UserAddressVM model)
         {
             try
             {
@@ -112,12 +120,25 @@ namespace AddressBookPL.Controllers
                 {
                     return Json(new { issuccess = false, msg = "Verileri eksiksiz girdiğinize emin olun!" });
                 }
+
                 model.CreatedDate = DateTime.Now;
+
+                // yeni gelen adres varsayılan mı? Evet ise veritabanındaki diğer varsayılanı KALDIR
+                if (model.IsDefaultAddress)
+                {
+                    var prevDefault = _userAddressManager.GetByConditions(x => x.IsDefaultAddress
+                    && !x.IsRemoved).Data;
+                    if (prevDefault != null)
+                    {
+                        prevDefault.IsDefaultAddress = false;
+                        _userAddressManager.Update(prevDefault);
+                    }
+                }
+
                 var result = _userAddressManager.Add(model);
                 if (result.IsSuccess)
                 {
-                    return Json(new { issuccess = true, msg = "Yeni adres eklendi!!!" });
-
+                    return Json(new { issuccess = true, msg = "Yeni adres eklendi!" });
                 }
                 return Json(new { issuccess = false, msg = "Ekleme BAŞARISIZ!" });
 
@@ -126,6 +147,7 @@ namespace AddressBookPL.Controllers
             {
                 return Json(new { issuccess = false, msg = ex.Message });
             }
+
         }
 
     }
